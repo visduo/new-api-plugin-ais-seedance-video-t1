@@ -69,26 +69,451 @@ export const meta = {
     name: "EchoStack Seedance Video Generations T1",
     description: {
         en: "EchoStack Seedance video generation T1",
-        zh: "EchoStack 火山引擎豆包 Seedance 视频生成",
+        zh: "EchoStack 火山引擎豆包 Seedance 视频生成"
     },
-    version: "1.1.0",
-    author: { name: "多栈科技" },
+    version: "1.1.1",
+    author: {
+        name: "多栈科技"
+    },
     website: "https://www.echostack.net/",
-    models: Object.keys(VIDEO_MODELS),
+    models: [
+        "doubao-seedance-2-0-260128",
+        "doubao-seedance-2-0-fast-260128",
+        "doubao-seedance-2-0-mini-260615",
+        "doubao-seedance-2-5-260628",
+        "doubao-seedance-2-5-flash-261115"
+    ],
     fetchMode: "per_task",
-    upstreams: ["vendor", "new_api"],
-    requiredCapabilities: ["duration-auto@1"],
-    usageSchema: seedanceUsageSchema(DEFAULT_VIDEO_PROFILE),
-    usageExamples: seedanceUsageExamples(DEFAULT_VIDEO_PROFILE),
-    usageProfiles: capabilityUsageProfiles(VIDEO_MODELS, seedanceUsageSchema, seedanceUsageExamples),
+    upstreams: [
+        "vendor",
+        "new_api"
+    ],
+    requiredCapabilities: [
+        "duration-auto@1"
+    ],
+    usageSchema: {
+        tokens: {
+            type: "number",
+            unit: "token",
+            description: {
+                en: "Billing token unit price",
+                zh: "计费 Token 单价"
+            }
+        },
+        resolution: {
+            enum: [
+                "480p",
+                "720p",
+                "1080p",
+                "4k"
+            ],
+            enumLabels: {
+                "480p": {
+                    en: "480p",
+                    zh: "480p"
+                },
+                "720p": {
+                    en: "720p",
+                    zh: "720p"
+                },
+                "1080p": {
+                    en: "1080p",
+                    zh: "1080p"
+                },
+                "4k": {
+                    en: "4k",
+                    zh: "4k"
+                }
+            },
+            description: {
+                en: "Output video resolution",
+                zh: "输出视频分辨率"
+            }
+        },
+        video_input: {
+            enum: [
+                "none",
+                "video"
+            ],
+            enumLabels: {
+                none: {
+                    en: "No reference video",
+                    zh: "无参考视频"
+                },
+                video: {
+                    en: "With reference video",
+                    zh: "有参考视频"
+                }
+            },
+            description: {
+                en: "Reference video input",
+                zh: "参考视频输入"
+            }
+        }
+    },
+    usageExamples: [
+        {
+            label: "480p · 5s",
+            facts: {
+                tokens: 48038,
+                resolution: "480p",
+                video_input: "none"
+            }
+        },
+        {
+            label: "720p · 5s",
+            facts: {
+                tokens: 108000,
+                resolution: "720p",
+                video_input: "none"
+            }
+        },
+        {
+            label: "1080p · 5s",
+            facts: {
+                tokens: 243000,
+                resolution: "1080p",
+                video_input: "none"
+            }
+        },
+        {
+            label: "4k · 5s",
+            facts: {
+                tokens: 972000,
+                resolution: "4k",
+                video_input: "none"
+            }
+        },
+        {
+            label: "720p · 5s (+4s 输入视频)",
+            facts: {
+                tokens: 194400,
+                resolution: "720p",
+                video_input: "video"
+            }
+        }
+    ],
+    usageProfiles: [
+        {
+            models: [
+                "doubao-seedance-2-0-260128"
+            ],
+            schema: {
+                tokens: {
+                    type: "number",
+                    unit: "token",
+                    description: {
+                        en: "Billing token unit price",
+                        zh: "计费 Token 单价"
+                    }
+                },
+                resolution: {
+                    enum: [
+                        "480p",
+                        "720p",
+                        "1080p",
+                        "4k"
+                    ],
+                    enumLabels: {
+                        "480p": {
+                            en: "480p",
+                            zh: "480p"
+                        },
+                        "720p": {
+                            en: "720p",
+                            zh: "720p"
+                        },
+                        "1080p": {
+                            en: "1080p",
+                            zh: "1080p"
+                        },
+                        "4k": {
+                            en: "4k",
+                            zh: "4k"
+                        }
+                    },
+                    description: {
+                        en: "Output video resolution",
+                        zh: "输出视频分辨率"
+                    }
+                },
+                video_input: {
+                    enum: [
+                        "none",
+                        "video"
+                    ],
+                    enumLabels: {
+                        none: {
+                            en: "No reference video",
+                            zh: "无参考视频"
+                        },
+                        video: {
+                            en: "With reference video",
+                            zh: "有参考视频"
+                        }
+                    },
+                    description: {
+                        en: "Reference video input",
+                        zh: "参考视频输入"
+                    }
+                }
+            },
+            examples: [
+                {
+                    label: "480p · 5s",
+                    facts: {
+                        tokens: 48038,
+                        resolution: "480p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s",
+                    facts: {
+                        tokens: 108000,
+                        resolution: "720p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "1080p · 5s",
+                    facts: {
+                        tokens: 243000,
+                        resolution: "1080p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "4k · 5s",
+                    facts: {
+                        tokens: 972000,
+                        resolution: "4k",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s (+4s 输入视频)",
+                    facts: {
+                        tokens: 194400,
+                        resolution: "720p",
+                        video_input: "video"
+                    }
+                }
+            ]
+        },
+        {
+            models: [
+                "doubao-seedance-2-0-fast-260128",
+                "doubao-seedance-2-0-mini-260615",
+                "doubao-seedance-2-5-flash-261115"
+            ],
+            schema: {
+                tokens: {
+                    type: "number",
+                    unit: "token",
+                    description: {
+                        en: "Billing token unit price",
+                        zh: "计费 Token 单价"
+                    }
+                },
+                resolution: {
+                    enum: [
+                        "480p",
+                        "720p"
+                    ],
+                    enumLabels: {
+                        "480p": {
+                            en: "480p",
+                            zh: "480p"
+                        },
+                        "720p": {
+                            en: "720p",
+                            zh: "720p"
+                        }
+                    },
+                    description: {
+                        en: "Output video resolution",
+                        zh: "输出视频分辨率"
+                    }
+                },
+                video_input: {
+                    enum: [
+                        "none",
+                        "video"
+                    ],
+                    enumLabels: {
+                        none: {
+                            en: "No reference video",
+                            zh: "无参考视频"
+                        },
+                        video: {
+                            en: "With reference video",
+                            zh: "有参考视频"
+                        }
+                    },
+                    description: {
+                        en: "Reference video input",
+                        zh: "参考视频输入"
+                    }
+                }
+            },
+            examples: [
+                {
+                    label: "480p · 5s",
+                    facts: {
+                        tokens: 48038,
+                        resolution: "480p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s",
+                    facts: {
+                        tokens: 108000,
+                        resolution: "720p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s (+4s 输入视频)",
+                    facts: {
+                        tokens: 194400,
+                        resolution: "720p",
+                        video_input: "video"
+                    }
+                }
+            ]
+        },
+        {
+            models: [
+                "doubao-seedance-2-5-260628"
+            ],
+            schema: {
+                tokens: {
+                    type: "number",
+                    unit: "token",
+                    description: {
+                        en: "Billing token unit price",
+                        zh: "计费 Token 单价"
+                    }
+                },
+                resolution: {
+                    enum: [
+                        "480p",
+                        "720p",
+                        "1080p"
+                    ],
+                    enumLabels: {
+                        "480p": {
+                            en: "480p",
+                            zh: "480p"
+                        },
+                        "720p": {
+                            en: "720p",
+                            zh: "720p"
+                        },
+                        "1080p": {
+                            en: "1080p",
+                            zh: "1080p"
+                        }
+                    },
+                    description: {
+                        en: "Output video resolution",
+                        zh: "输出视频分辨率"
+                    }
+                },
+                video_input: {
+                    enum: [
+                        "none",
+                        "video"
+                    ],
+                    enumLabels: {
+                        none: {
+                            en: "No reference video",
+                            zh: "无参考视频"
+                        },
+                        video: {
+                            en: "With reference video",
+                            zh: "有参考视频"
+                        }
+                    },
+                    description: {
+                        en: "Reference video input",
+                        zh: "参考视频输入"
+                    }
+                }
+            },
+            examples: [
+                {
+                    label: "480p · 5s",
+                    facts: {
+                        tokens: 48038,
+                        resolution: "480p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s",
+                    facts: {
+                        tokens: 108000,
+                        resolution: "720p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "1080p · 5s",
+                    facts: {
+                        tokens: 243000,
+                        resolution: "1080p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s (+4s 输入视频)",
+                    facts: {
+                        tokens: 194400,
+                        resolution: "720p",
+                        video_input: "video"
+                    }
+                }
+            ]
+        }
+    ],
     routes: [
-        { method: "POST", path: "/api/v3/contents/generations/tasks", type: "submit", decode: "createTask", render: "taskCreated" },
-        { method: "GET", path: "/api/v3/contents/generations/tasks/:task_id", type: "query", render: "taskStatus" },
+        {
+            method: "POST",
+            path: "/api/v3/contents/generations/tasks",
+            type: "submit",
+            decode: "createTask",
+            render: "taskCreated"
+        },
+        {
+            method: "GET",
+            path: "/api/v3/contents/generations/tasks/:task_id",
+            type: "query",
+            render: "taskStatus"
+        }
     ],
     protocols: [
-        { name: "openai_responses", supports: ["stream", "sync", "background"] },
-        { name: "openai_video", models: Object.keys(VIDEO_MODELS) },
-    ],
+        {
+            name: "openai_responses",
+            supports: [
+                "stream",
+                "sync",
+                "background"
+            ]
+        },
+        {
+            name: "openai_video",
+            models: [
+                "doubao-seedance-2-0-260128",
+                "doubao-seedance-2-0-fast-260128",
+                "doubao-seedance-2-0-mini-260615",
+                "doubao-seedance-2-5-260628",
+                "doubao-seedance-2-5-flash-261115"
+            ]
+        }
+    ]
 };
 
 function trimmed(value) {

@@ -1,12 +1,12 @@
 ---
 changelogVersion: 1
 plugin: "visduo_ais-seedance-video-t1"
-version: "1.1.0"
+version: "1.1.1"
 locale: "zh-CN"
 ---
 # Changelog
 
-## [1.1.0]
+## [1.1.1]
 
 ### Added
 
