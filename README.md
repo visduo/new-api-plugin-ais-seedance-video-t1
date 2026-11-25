@@ -37,9 +37,11 @@ The plugin also declares the `openai_responses` protocol with streaming, synchro
 
 `tokens` is the billable quantity. Unless the upstream reports its own usage when the task completes, the plugin estimates it as `seconds × width × height × 24 / 1024` at the chosen resolution, for example 108,000 tokens for a 5-second 720p video.
 
+When the request carries a reference video, the plugin adds the model's longest duration to the estimated seconds, so the input video is billed in the same `tokens` quantity. For a 2.5 model that is 5 s of output plus 30 s of input, or 756,000 tokens at 720p.
+
 When a request omits the resolution, billing assumes 1080p for models that support it and otherwise the largest supported resolution.
 
-`resolution` and `video_input` select which price applies. `video_input` is `video` when the request carries a reference video. When the gateway asks for billing ratios, the plugin returns `video_input_ratio` for those requests, so a reference-video request can be priced differently from a text-only one.
+`resolution` and `video_input` are reported alongside `tokens` and may be used in a price expression. The plugin applies no multiplier of its own, so a reference-video request is charged only through the larger `tokens` value.
 
 Set a price per model for every resolution and video-input combination the model supports.
 

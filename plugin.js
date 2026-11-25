@@ -39,7 +39,13 @@ function seedanceUsageExamples(profile) {
         resolution: resolution,
         seconds: 5,
     }));
-    if (profile.videoInput) specs.push({ label: "720p · 5s (+4s 输入视频)", resolution: "720p", seconds: 9, video_input: "video" });
+    if (profile.videoInput)
+        specs.push({
+            label: "720p · 5s (+" + profile.maxDuration + "s 输入视频)",
+            resolution: "720p",
+            seconds: 5 + profile.maxDuration,
+            video_input: "video",
+        });
     return specs.map((spec) => {
         const facts = { tokens: Math.round(estimateTokens(spec.seconds, spec.resolution)), resolution: spec.resolution };
         if (profile.videoInput) facts.video_input = spec.video_input || "none";
@@ -71,7 +77,7 @@ export const meta = {
         en: "EchoStack Seedance video generation T1",
         zh: "EchoStack 火山引擎豆包 Seedance 视频生成"
     },
-    version: "1.1.1",
+    version: "1.2.0",
     author: {
         name: "多栈科技"
     },
@@ -185,9 +191,9 @@ export const meta = {
             }
         },
         {
-            label: "720p · 5s (+4s 输入视频)",
+            label: "720p · 5s (+30s 输入视频)",
             facts: {
-                tokens: 194400,
+                tokens: 756000,
                 resolution: "720p",
                 video_input: "video"
             }
@@ -292,9 +298,9 @@ export const meta = {
                     }
                 },
                 {
-                    label: "720p · 5s (+4s 输入视频)",
+                    label: "720p · 5s (+20s 输入视频)",
                     facts: {
-                        tokens: 194400,
+                        tokens: 432000,
                         resolution: "720p",
                         video_input: "video"
                     }
@@ -375,9 +381,9 @@ export const meta = {
                     }
                 },
                 {
-                    label: "720p · 5s (+4s 输入视频)",
+                    label: "720p · 5s (+20s 输入视频)",
                     facts: {
-                        tokens: 194400,
+                        tokens: 432000,
                         resolution: "720p",
                         video_input: "video"
                     }
@@ -469,9 +475,9 @@ export const meta = {
                     }
                 },
                 {
-                    label: "720p · 5s (+4s 输入视频)",
+                    label: "720p · 5s (+20s 输入视频)",
                     facts: {
-                        tokens: 194400,
+                        tokens: 756000,
                         resolution: "720p",
                         video_input: "video"
                     }
@@ -586,7 +592,7 @@ function videoResolution(ctx) {
     const req = ctx.requestBody || {};
     const metadata = req.vendorBody || req.metadata || {};
     const profile = videoProfile(ctx);
-    const raw = trimmed(metadata.resolution || req.size).toLowerCase();
+    const raw = trimmed(metadata.resolution || req.resolution || req.size).toLowerCase();
     const recognized = SEEDANCE_RESOLUTIONS.includes(raw) || raw.replace("*", "x").split("x").length === 2;
     if (!recognized) return profile.resolutions.includes("1080p") ? "1080p" : profile.resolutions[profile.resolutions.length - 1];
     const resolution = normalizeResolution(raw);
@@ -605,23 +611,6 @@ function resolutionMaxPixels(resolution) {
 function estimateTokens(seconds, resolution) {
     const dims = resolutionMaxPixels(resolution);
     return (seconds * dims[0] * dims[1] * 24) / 1024;
-}
-
-function videoInputRatio(model, resolution, content) {
-    const video = hasVideo(content);
-    const res = trimmed(resolution).toLowerCase();
-    if (model === "doubao-seedance-2-5-260628") {
-        if (res === "1080p") return video ? 7.0 / 10.7 : 11.7 / 10.7;
-        return video ? 42 / 70 : 1;
-    }
-    if (model === "doubao-seedance-2-0-260128") {
-        if (res === "1080p") return video ? 31 / 46 : 51 / 46;
-        if (res === "4k") return video ? 16 / 46 : 26 / 46;
-        return video ? 28 / 46 : 1;
-    }
-    if (model === "doubao-seedance-2-0-fast-260128") return video ? 22 / 37 : 1;
-    if (model === "doubao-seedance-2-0-mini-260615") return video ? 14 / 23 : 1;
-    return 1;
 }
 
 function responsesInput(req) {
@@ -763,8 +752,7 @@ export function extractUsage(ctx) {
     const req = ctx.requestBody || {};
     const metadata = req.vendorBody || req.metadata || {};
     if (ctx.usagePurpose === "billing_ratios") {
-        const ratio = videoInputRatio(ctx.upstreamModel || ctx.model, metadata.resolution, metadata.content);
-        return ratio === 1 ? null : { video_input_ratio: ratio };
+        return null;
     }
     const profile = videoProfile(ctx);
     const stated = req.seconds || req.duration || metadata.duration;
@@ -776,8 +764,9 @@ export function extractUsage(ctx) {
     if (seconds <= 0) seconds = 5;
     seconds = Math.min(seconds, 3600);
     const resolution = videoResolution(ctx);
-    const facts = { tokens: estimateTokens(seconds, resolution), resolution: resolution };
-    facts.video_input = hasVideo(metadata.content) ? "video" : "none";
+    const videoInput = hasVideo(metadata.content);
+    const facts = { tokens: estimateTokens(seconds + (videoInput ? profile.maxDuration : 0), resolution), resolution: resolution };
+    facts.video_input = videoInput ? "video" : "none";
     return facts;
 }
 
