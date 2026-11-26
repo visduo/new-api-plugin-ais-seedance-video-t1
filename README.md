@@ -10,7 +10,7 @@ Creates asynchronous Seedance video generation tasks through New API.
 
 Choose the Task Plugin (61) channel type and bind `EchoStack Seedance Video Generations T1`. Enter the Base URL and key from the EchoStack gateway console. The plugin ships no default address, so the channel Base URL is required.
 
-If the upstream is another New API gateway, choose the New API (60) channel type and enter that gateway's address and token. For that channel the plugin appends `/doubao` to the channel Base URL; the upstream gateway also needs this plugin installed.
+If the upstream is another New API gateway, choose the New API (60) channel type and enter that gateway's address and token. The plugin calls the channel Base URL unchanged, so the upstream gateway also needs this plugin installed.
 
 ## Models
 
@@ -21,6 +21,7 @@ If the upstream is another New API gateway, choose the New API (60) channel type
 | `doubao-seedance-2-0-mini-260615` | 480p, 720p | 15 s | yes |
 | `doubao-seedance-2-5-260628` | 480p, 720p, 1080p | 30 s | yes |
 | `doubao-seedance-2-5-flash-261115` | 480p, 720p | 30 s | yes |
+| `ais-seedance-video-test` | 480p, 720p, 1080p, 4k | 30 s | yes |
 
 When a request omits the duration, the plugin bills the duration shown in the table. Send `-1` as `seconds` to ask the upstream for an automatic duration.
 

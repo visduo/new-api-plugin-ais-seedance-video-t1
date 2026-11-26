@@ -4,6 +4,7 @@ const VIDEO_MODELS = {
     "doubao-seedance-2-0-mini-260615": { resolutions: ["480p", "720p"], maxDuration: 15, videoInput: true },
     "doubao-seedance-2-5-260628": { resolutions: ["480p", "720p", "1080p"], maxDuration: 30, videoInput: true },
     "doubao-seedance-2-5-flash-261115": { resolutions: ["480p", "720p"], maxDuration: 30, videoInput: true },
+    "ais-seedance-video-test": { resolutions: ["480p", "720p", "1080p", "4k"], maxDuration: 30, videoInput: true },
 };
 const SEEDANCE_RESOLUTIONS = ["480p", "720p", "1080p", "4k"];
 const DEFAULT_VIDEO_PROFILE = { resolutions: SEEDANCE_RESOLUTIONS, maxDuration: 30, videoInput: true };
@@ -77,7 +78,7 @@ export const meta = {
         en: "EchoStack Seedance video generation T1",
         zh: "EchoStack 火山引擎豆包 Seedance 视频生成"
     },
-    version: "1.2.0",
+    version: "1.3.0",
     author: {
         name: "多栈科技"
     },
@@ -87,7 +88,8 @@ export const meta = {
         "doubao-seedance-2-0-fast-260128",
         "doubao-seedance-2-0-mini-260615",
         "doubao-seedance-2-5-260628",
-        "doubao-seedance-2-5-flash-261115"
+        "doubao-seedance-2-5-flash-261115",
+        "ais-seedance-video-test"
     ],
     fetchMode: "per_task",
     upstreams: [
@@ -475,7 +477,114 @@ export const meta = {
                     }
                 },
                 {
-                    label: "720p · 5s (+20s 输入视频)",
+                    label: "720p · 5s (+30s 输入视频)",
+                    facts: {
+                        tokens: 756000,
+                        resolution: "720p",
+                        video_input: "video"
+                    }
+                }
+            ]
+        },
+        {
+            models: [
+                "ais-seedance-video-test"
+            ],
+            schema: {
+                tokens: {
+                    type: "number",
+                    unit: "token",
+                    description: {
+                        en: "Billing token unit price",
+                        zh: "计费 Token 单价"
+                    }
+                },
+                resolution: {
+                    enum: [
+                        "480p",
+                        "720p",
+                        "1080p",
+                        "4k"
+                    ],
+                    enumLabels: {
+                        "480p": {
+                            en: "480p",
+                            zh: "480p"
+                        },
+                        "720p": {
+                            en: "720p",
+                            zh: "720p"
+                        },
+                        "1080p": {
+                            en: "1080p",
+                            zh: "1080p"
+                        },
+                        "4k": {
+                            en: "4k",
+                            zh: "4k"
+                        }
+                    },
+                    description: {
+                        en: "Output video resolution",
+                        zh: "输出视频分辨率"
+                    }
+                },
+                video_input: {
+                    enum: [
+                        "none",
+                        "video"
+                    ],
+                    enumLabels: {
+                        none: {
+                            en: "No reference video",
+                            zh: "无参考视频"
+                        },
+                        video: {
+                            en: "With reference video",
+                            zh: "有参考视频"
+                        }
+                    },
+                    description: {
+                        en: "Reference video input",
+                        zh: "参考视频输入"
+                    }
+                }
+            },
+            examples: [
+                {
+                    label: "480p · 5s",
+                    facts: {
+                        tokens: 48038,
+                        resolution: "480p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s",
+                    facts: {
+                        tokens: 108000,
+                        resolution: "720p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "1080p · 5s",
+                    facts: {
+                        tokens: 243000,
+                        resolution: "1080p",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "4k · 5s",
+                    facts: {
+                        tokens: 972000,
+                        resolution: "4k",
+                        video_input: "none"
+                    }
+                },
+                {
+                    label: "720p · 5s (+30s 输入视频)",
                     facts: {
                         tokens: 756000,
                         resolution: "720p",
@@ -516,7 +625,8 @@ export const meta = {
                 "doubao-seedance-2-0-fast-260128",
                 "doubao-seedance-2-0-mini-260615",
                 "doubao-seedance-2-5-260628",
-                "doubao-seedance-2-5-flash-261115"
+                "doubao-seedance-2-5-flash-261115",
+                "ais-seedance-video-test"
             ]
         }
     ]
@@ -527,7 +637,7 @@ function trimmed(value) {
 }
 
 function apiRoot(ctx) {
-    return ctx.baseUrl + (ctx.upstream && ctx.upstream.kind === "new_api" ? "/doubao" : "");
+    return ctx.baseUrl;
 }
 
 function draftTaskIds(content) {

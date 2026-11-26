@@ -9,7 +9,7 @@ locale: zh-CN
 
 渠道类型选任务插件（61），绑定 `EchoStack Seedance Video Generations T1`。Base URL 和密钥从 EchoStack 网关控制台中获取。插件不内置默认地址，渠道 Base URL 为必填项。
 
-如果上游是另一台 New API 网关，渠道类型选 New API（60），填写该网关的地址和令牌。该渠道下插件会在渠道 Base URL 后追加 `/doubao`；上游网关也需要安装本插件。
+如果上游是另一台 New API 网关，渠道类型选 New API（60），填写该网关的地址和令牌。插件直接使用渠道 Base URL，不再追加前缀；上游网关也需要安装本插件。
 
 ## 模型
 
@@ -20,6 +20,7 @@ locale: zh-CN
 | `doubao-seedance-2-0-mini-260615` | 480p、720p | 15 秒 | 支持 |
 | `doubao-seedance-2-5-260628` | 480p、720p、1080p | 30 秒 | 支持 |
 | `doubao-seedance-2-5-flash-261115` | 480p、720p | 30 秒 | 支持 |
+| `ais-seedance-video-test` | 480p、720p、1080p、4k | 30 秒 | 支持 |
 
 请求未指定时长时，插件按表中的时长计费。`seconds` 传 `-1` 表示由上游自动决定时长。
 
